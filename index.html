@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Emoji Picker</title>
+<style>
+body{font-family:Arial;background:#fffbeb;padding:25px}
+main{max-width:650px;margin:auto;background:white;padding:30px;border-radius:16px}
+input{width:100%;padding:14px;box-sizing:border-box;border:1px solid #facc15;border-radius:8px}
+#emojis{display:grid;grid-template-columns:repeat(auto-fit,minmax(65px,1fr));gap:10px;margin-top:25px}
+button{background:#fef3c7;border:0;border-radius:10px;padding:15px;font-size:30px;cursor:pointer}
+button:hover{background:#fde68a}
+#status{color:#a16207;text-align:center;font-size:20px}
+</style>
+</head>
+<body>
+<main>
+<h1>Emoji Picker</h1>
+<p>Find and copy your favorite emojis.</p>
+<input id="search" placeholder="Search emojis..." oninput="render()">
+<div id="emojis"></div>
+<p id="status">Select an emoji to copy it.</p>
+</main>
+<script>
+const emojis=[
+ ["😀","happy"],["😂","laugh"],["😍","love"],
+ ["😎","cool"],["😴","sleep"],["😢","sad"],
+ ["❤️","heart"],["⭐","star"],["🔥","fire"],
+ ["👍","thumbs up"],["🎉","party"],["🚀","rocket"],
+ ["🌍","earth"],["🌈","rainbow"],["☀️","sun"],
+ ["🌙","moon"],["🍎","apple"],["🍕","pizza"],
+ ["⚽","football"],["🎮","game"],["📚","books"],
+ ["💻","computer"],["🎵","music"],["🌸","flower"]
+];
+function render(){
+ const query=document.getElementById("search").value.toLowerCase();
+ const area=document.getElementById("emojis");
+ area.innerHTML="";
+ emojis.filter(e=>e[1].includes(query)||e[0].includes(query)).forEach(e=>{
+  const btn=document.createElement("button");
+  btn.textContent=e[0];
+  btn.title=e[1];
+  btn.setAttribute("aria-label",e[1]);
+  btn.onclick=async()=>{
+   try{
+    await navigator.clipboard.writeText(e[0]);
+    document.getElementById("status").textContent=e[0]+" Copied!";
+   }catch{
+    document.getElementById("status").textContent="Selected: "+e[0];
+   }
+  };
+  area.appendChild(btn);
+ });
+}
+render();
+</script>
+</body>
+</html>
