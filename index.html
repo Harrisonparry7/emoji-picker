@@ -2,56 +2,57 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Emoji Picker</title>
 <style>
-body{font-family:Arial;background:#fffbeb;padding:25px}
-main{max-width:650px;margin:auto;background:white;padding:30px;border-radius:16px}
-input{width:100%;padding:14px;box-sizing:border-box;border:1px solid #facc15;border-radius:8px}
-#emojis{display:grid;grid-template-columns:repeat(auto-fit,minmax(65px,1fr));gap:10px;margin-top:25px}
-button{background:#fef3c7;border:0;border-radius:10px;padding:15px;font-size:30px;cursor:pointer}
-button:hover{background:#fde68a}
-#status{color:#a16207;text-align:center;font-size:20px}
+body{font-family:Arial;background:#fdf4ff;padding:25px}
+main{max-width:550px;margin:auto;background:white;padding:25px;border-radius:15px}
+input{width:100%;padding:12px;box-sizing:border-box;margin:10px 0}
+#grid{display:grid;grid-template-columns:repeat(5,1fr);gap:10px}
+.emoji{font-size:30px;padding:12px;border:0;background:#fae8ff;border-radius:8px;cursor:pointer}
+#selected{font-size:45px;text-align:center;margin:20px}
+button.copy{padding:11px 18px;background:#a21caf;color:white;border:0;border-radius:7px;cursor:pointer}
 </style>
 </head>
 <body>
 <main>
 <h1>Emoji Picker</h1>
-<p>Find and copy your favorite emojis.</p>
-<input id="search" placeholder="Search emojis..." oninput="render()">
-<div id="emojis"></div>
-<p id="status">Select an emoji to copy it.</p>
+<input id="search" placeholder="Search emoji by name...">
+<div id="selected">😀</div>
+<div id="grid"></div>
+<p id="status"></p>
+<button class="copy" onclick="copyEmoji()">Copy Selected Emoji</button>
 </main>
 <script>
 const emojis=[
- ["😀","happy"],["😂","laugh"],["😍","love"],
- ["😎","cool"],["😴","sleep"],["😢","sad"],
- ["❤️","heart"],["⭐","star"],["🔥","fire"],
- ["👍","thumbs up"],["🎉","party"],["🚀","rocket"],
- ["🌍","earth"],["🌈","rainbow"],["☀️","sun"],
- ["🌙","moon"],["🍎","apple"],["🍕","pizza"],
- ["⚽","football"],["🎮","game"],["📚","books"],
- ["💻","computer"],["🎵","music"],["🌸","flower"]
+ ["😀","smile"],["😂","laugh"],["❤️","love"],["😍","heart eyes"],
+ ["😎","cool"],["🥳","party"],["😭","cry"],["👍","thumbs up"],
+ ["🔥","fire"],["🌟","star"],["🎉","celebration"],["🚀","rocket"],
+ ["🍎","apple"],["🐱","cat"],["⚽","football"],["🌈","rainbow"],
+ ["💡","idea"],["🎵","music"],["☀️","sun"],["🌙","moon"]
 ];
+let selected="😀";
 function render(){
  const query=document.getElementById("search").value.toLowerCase();
- const area=document.getElementById("emojis");
- area.innerHTML="";
- emojis.filter(e=>e[1].includes(query)||e[0].includes(query)).forEach(e=>{
+ const grid=document.getElementById("grid");
+ grid.innerHTML="";
+ emojis.filter(x=>x[1].includes(query)).forEach(item=>{
   const btn=document.createElement("button");
-  btn.textContent=e[0];
-  btn.title=e[1];
-  btn.setAttribute("aria-label",e[1]);
-  btn.onclick=async()=>{
-   try{
-    await navigator.clipboard.writeText(e[0]);
-    document.getElementById("status").textContent=e[0]+" Copied!";
-   }catch{
-    document.getElementById("status").textContent="Selected: "+e[0];
-   }
-  };
-  area.appendChild(btn);
+  btn.className="emoji";
+  btn.textContent=item[0];
+  btn.title=item[1];
+  btn.onclick=()=>{selected=item[0];document.getElementById("selected").textContent=selected;};
+  grid.appendChild(btn);
  });
+}
+document.getElementById("search").addEventListener("input",render);
+async function copyEmoji(){
+ try{
+  await navigator.clipboard.writeText(selected);
+  document.getElementById("status").textContent="Emoji copied!";
+ }catch{
+  document.getElementById("status").textContent="Please copy the emoji manually.";
+ }
 }
 render();
 </script>
